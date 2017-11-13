@@ -54,6 +54,8 @@ class Parser(object):
             node = self.expr()
             self.eat(RPAREN)
             return node
+        elif token.type == STRING:
+            print()
 
     def term(self):
         """term : factor ((MUL | DIV) factor)*"""

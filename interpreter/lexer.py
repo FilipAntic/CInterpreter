@@ -2,8 +2,9 @@
 #
 # EOF (end-of-file) token is used to indicate that
 # there is no more input left for lexical analysis
-INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF = (
-    'INTEGER', 'PLUS', 'MINUS', 'MUL', 'DIV', '(', ')', 'EOF'
+INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF, SIN, COS, TAN, CTG, SQRT, POW, LOG, LT, GT, LTE, GTE, STRING = (
+    'INTEGER', 'PLUS', 'MINUS', 'MUL', 'DIV', '(', ')', 'EOF', 'SIN', 'COS', 'TAN', 'CTG', 'SQRT', 'POW', 'LOG', 'LT',
+    'GT', 'LTE', 'GTE', 'STRING'
 )
 
 
@@ -60,6 +61,13 @@ class Lexer(object):
             self.advance()
         return int(result)
 
+    def math_function(self):
+        result = ''
+        while self.current_char is not None and self.current_char.isalpha() and self.current_char.isupper():
+            result += self.current_char
+            self.advance()
+        return str(result)
+
     def get_next_token(self):
         """Lexical analyzer (also known as scanner or tokenizer)
 
@@ -75,6 +83,8 @@ class Lexer(object):
             if self.current_char.isdigit():
                 return Token(INTEGER, self.integer())
 
+            if self.current_char.isalpha():
+                return Token(STRING,self.math_function())
             if self.current_char == '+':
                 self.advance()
                 return Token(PLUS, '+')
