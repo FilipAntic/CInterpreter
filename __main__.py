@@ -11,6 +11,8 @@ def main():
         if not text:
             continue
 
+        if text == 'EXIT':
+            return
         lexer = Lexer(text)
         parser = Parser(lexer)
         interpreter = Interpreter(parser)
