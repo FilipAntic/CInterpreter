@@ -1,8 +1,23 @@
 from interpreter.lexer import Lexer
 from interpreter.parser import Parser
 from interpreter.interpreter import Interpreter
+import json
+
+def emptyJSON():
+    with open('vars.json', 'w') as f:
+        f.write("")
 
 def main():
+    emptyJSON()
+    with open('test.txt', 'r') as file:
+        for line in file:
+            text = line
+            lexer = Lexer(text)
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
+            print(result)
+
     while True:
         try:
             text = input('>>> ')
@@ -22,3 +37,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

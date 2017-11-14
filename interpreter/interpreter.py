@@ -1,4 +1,6 @@
-from .lexer import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF
+from .lexer import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF,EQ,GT,GTE,LTE,LT
+import json
+
 
 ###############################################################################
 #                                                                             #
@@ -19,6 +21,7 @@ class NodeVisitor(object):
 class Interpreter(NodeVisitor):
     def __init__(self, parser):
         self.parser = parser
+        self.variables = {}
 
     def visit_BinOp(self, node):
         if node.op.type == PLUS:
@@ -29,6 +32,19 @@ class Interpreter(NodeVisitor):
             return self.visit(node.left) * self.visit(node.right)
         elif node.op.type == DIV:
             return self.visit(node.left) / self.visit(node.right)
+        elif node.op.type == EQ:
+            self.readFromFile()
+            self.variables[node.left] = self.visit(node.right)
+            self.writeToFile()
+            return ""
+        elif node.op.type == GT:
+            return self.visit(node.left) > self.visit(node.right)
+        elif node.op.type == GTE:
+            return self.visit(node.left) >= self.visit(node.right)
+        elif node.op.type == LT:
+            return self.visit(node.left) < self.visit(node.right)
+        elif node.op.type == LTE:
+            return self.visit(node.left) <= self.visit(node.right)
 
     def visit_Num(self, node):
         return node.value
@@ -37,3 +53,14 @@ class Interpreter(NodeVisitor):
         tree = self.parser.parse()
         return self.visit(tree)
 
+    def readFromFile(self):
+        with open('vars.json', 'r') as f:
+            try:
+                self.variables = json.load(f)
+            # if the file is empty the ValueError will be thrown
+            except ValueError:
+                self.variables = {}
+
+    def writeToFile(self):
+        with open('vars.json', 'w') as f:
+            json.dump(self.variables, f)

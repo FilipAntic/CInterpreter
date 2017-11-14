@@ -2,9 +2,9 @@
 #
 # EOF (end-of-file) token is used to indicate that
 # there is no more input left for lexical analysis
-INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF, SIN, COS, TAN, CTG, SQRT, POW, LOG, LT, GT, LTE, GTE, STRING = (
+INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF, SIN, COS, TAN, CTG, SQRT, POW, LOG, LT, GT, LTE, GTE, STRING, COMMA, EQ = (
     'INTEGER', 'PLUS', 'MINUS', 'MUL', 'DIV', '(', ')', 'EOF', 'SIN', 'COS', 'TAN', 'CTG', 'SQRT', 'POW', 'LOG', 'LT',
-    'GT', 'LTE', 'GTE', 'STRING'
+    'GT', 'LTE', 'GTE', 'STRING', 'COMMA', 'EQ'
 )
 
 
@@ -63,10 +63,20 @@ class Lexer(object):
 
     def math_function(self):
         result = ''
-        while self.current_char is not None and self.current_char.isalpha() and self.current_char.isupper():
+        while self.current_char is not None and self.current_char.isalpha():
             result += self.current_char
             self.advance()
         return str(result)
+
+    def isLTE(self):
+        if self.current_char == '<' and self.text[(self.pos+1)]=='=':
+            return True
+        return False
+
+    def isGTE(self):
+        if self.current_char == '>' and self.text[(self.pos + 1)] == '=':
+            return True
+        return False
 
     def get_next_token(self):
         """Lexical analyzer (also known as scanner or tokenizer)
@@ -75,7 +85,6 @@ class Lexer(object):
         apart into tokens. One token at a time.
         """
         while self.current_char is not None:
-
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
@@ -84,7 +93,11 @@ class Lexer(object):
                 return Token(INTEGER, self.integer())
 
             if self.current_char.isalpha():
-                return Token(STRING,self.math_function())
+                result = self.math_function()
+                return Token(STRING, result)
+            if self.current_char == ',':
+                self.advance()
+                return Token(COMMA, ',')
             if self.current_char == '+':
                 self.advance()
                 return Token(PLUS, '+')
@@ -108,7 +121,22 @@ class Lexer(object):
             if self.current_char == ')':
                 self.advance()
                 return Token(RPAREN, ')')
-
+            if self.current_char == '=':
+                self.advance()
+                return Token(EQ, '=')
+            if self.isGTE():
+                self.advance()
+                self.advance()
+                return Token(GTE, '>=')
+            if self.isLTE():
+                self.advance()
+                self.advance()
+                return Token(LTE, '<=')
+            if self.current_char == '>':
+                self.advance()
+                return Token(GT, '>')
+            if self.current_char == '<':
+                self.advance()
+                return Token(LT, '<')
             self.error()
-
         return Token(EOF, None)
