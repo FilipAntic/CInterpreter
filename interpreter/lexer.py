@@ -2,9 +2,9 @@
 #
 # EOF (end-of-file) token is used to indicate that
 # there is no more input left for lexical analysis
-INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF, SIN, COS, TAN, CTG, SQRT, POW, LOG, LT, GT, LTE, GTE, STRING, COMMA, EQ = (
+INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF, SIN, COS, TAN, CTG, SQRT, POW, LOG, LT, GT, LTE, GTE, STRING, COMMA, EQ, LB, LG = (
     'INTEGER', 'PLUS', 'MINUS', 'MUL', 'DIV', '(', ')', 'EOF', 'SIN', 'COS', 'TAN', 'CTG', 'SQRT', 'POW', 'LOG', 'LT',
-    'GT', 'LTE', 'GTE', 'STRING', 'COMMA', 'EQ'
+    'GT', 'LTE', 'GTE', 'STRING', 'COMMA', 'EQ','LB','LG'
 )
 
 

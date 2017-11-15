@@ -69,27 +69,34 @@ class Parser(object):
                 if token.value == 'POW':
                     self.eat(COMMA)
                     node2 = self.raf_math()
-                    result = pow(node.value, node2.value)
+                    self.eat(RPAREN)
+                    return BinOp(left=node, op=token, right=node2)
                 elif token.value == 'SIN':
-                    result = sin(node.value)
+                    self.eat(RPAREN)
+                    return BinOp(left=node,op=token,right=7)
                 elif token.value == 'COS':
-                    result = cos(node.value)
+                    self.eat(RPAREN)
+                    return BinOp(left=node, op=token, right=7)
                 elif token.value == 'TAN':
-                    result = tan(node.value)
+                    self.eat(RPAREN)
+                    return BinOp(left=node, op=token, right=7)
                 elif token.value == 'CTG':
-                    result = 1 / tan(node.value)
+                    self.eat(RPAREN)
+                    return BinOp(left=node, op=token, right=7)
                 elif token.value == 'SQRT':
-                    result = sqrt(self.visit(node))
+                    self.eat(RPAREN)
+                    return BinOp(left=node, op=token, right=7)
                 elif token.value == 'LG':
-                    result = log10(node.value)
+                    self.eat(RPAREN)
+                    return BinOp(left=node, op=token, right=7)
                 elif token.value == 'LB':
-                    result = log2(node.value)
+                    self.eat(RPAREN)
+                    return BinOp(left=node, op=token, right=7)
                 elif token.value == 'LOG':
                     self.eat(COMMA)
                     node2 = self.raf_math()
-                    result = log(node.value, node2.value)
-                self.eat(RPAREN)
-                return Num(Token(token.value, result))
+                    self.eat(RPAREN)
+                    return BinOp(left=node,op=token,right=node2)
             self.readFromFile()
             if token.value in self.variables:
                 return Num(Token(token.value, self.variables.get(token.value)))
@@ -154,36 +161,3 @@ class Parser(object):
             except ValueError:
                 self.variables = {}
 
-    def visit(self, node):
-        method_name = 'visit_' + type(node).__name__
-        visitor = getattr(self, method_name, self.generic_visit)
-        return visitor(node)
-
-    def generic_visit(self, node):
-        raise Exception('No visit_{} method'.format(type(node).__name__))
-
-    def visit_BinOp(self, node):
-        if node.op.type == PLUS:
-            return self.visit(node.left) + self.visit(node.right)
-        elif node.op.type == MINUS:
-            return self.visit(node.left) - self.visit(node.right)
-        elif node.op.type == MUL:
-            return self.visit(node.left) * self.visit(node.right)
-        elif node.op.type == DIV:
-            return self.visit(node.left) / self.visit(node.right)
-        elif node.op.type == EQ:
-            self.readFromFile()
-            self.variables[node.left] = self.visit(node.right)
-            self.writeToFile()
-            return ""
-        elif node.op.type == GT:
-            return self.visit(node.left) > self.visit(node.right)
-        elif node.op.type == GTE:
-            return self.visit(node.left) >= self.visit(node.right)
-        elif node.op.type == LT:
-            return self.visit(node.left) < self.visit(node.right)
-        elif node.op.type == LTE:
-            return self.visit(node.left) <= self.visit(node.right)
-
-    def visit_Num(self, node):
-        return node.value

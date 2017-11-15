@@ -18,6 +18,7 @@ def main():
             result = interpreter.interpret()
             print(result)
 
+
     while True:
         try:
             text = input('>>> ')
@@ -32,7 +33,13 @@ def main():
         parser = Parser(lexer)
         interpreter = Interpreter(parser)
         result = interpreter.interpret()
-        print(result)
+        if result == '':
+            continue
+        if float(result).is_integer():
+            print("%.0f" % result)
+        else:
+            print("%.3f" % result)
+        # print(result)
 
 
 if __name__ == '__main__':

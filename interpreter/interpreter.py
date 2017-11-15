@@ -1,6 +1,6 @@
-from .lexer import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF,EQ,GT,GTE,LTE,LT
+from .lexer import  PLUS, MINUS, MUL, DIV,EQ,GT,GTE,LTE,LT,SIN,COS,CTG,TAN,LG,LB,SQRT,POW,LOG
 import json
-
+from math import *
 
 ###############################################################################
 #                                                                             #
@@ -45,7 +45,26 @@ class Interpreter(NodeVisitor):
             return self.visit(node.left) < self.visit(node.right)
         elif node.op.type == LTE:
             return self.visit(node.left) <= self.visit(node.right)
-
+        elif node.op.value == SIN:
+            return sin(self.visit(node.left))
+        elif node.op.value == COS:
+            return cos(self.visit(node.left))
+        elif node.op.value == CTG:
+            return 1/tan(self.visit(node.left))
+        elif node.op.value == TAN:
+            return tan(self.visit(node.left))
+        elif node.op.value == LG:
+            return log10(self.visit(node.left))
+        elif node.op.value == LB:
+            return log2(self.visit(node.left))
+        elif node.op.value == SQRT:
+            return sqrt(self.visit(node.left))
+        elif node.op.value == POW:
+            return pow(self.visit(node.left),self.visit(node.right))
+        elif node.op.value == POW:
+            return log(self.visit(node.left),self.visit(node.right))
+        else:
+            print(node.op)
     def visit_Num(self, node):
         return node.value
 
