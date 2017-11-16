@@ -9,15 +9,15 @@ def emptyJSON():
 
 def main():
     emptyJSON()
-    with open('test.txt', 'r') as file:
-        for line in file:
-            text = line
-            lexer = Lexer(text)
-            parser = Parser(lexer)
-            interpreter = Interpreter(parser)
-            result = interpreter.interpret()
-            print(result)
-
+    # with open('test.txt', 'r') as file:
+    #     for line in file:
+    #         text = line
+    #         lexer = Lexer(text)
+    #         parser = Parser(lexer)
+    #         interpreter = Interpreter(parser)
+    #         result = interpreter.interpret()
+    #         print(result)
+    #
 
     while True:
         try:

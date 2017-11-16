@@ -19,10 +19,12 @@ class BinOp(AST):
         self.token = self.op = op
         self.right = right
 
+
 class Num(AST):
     def __init__(self, token):
         self.token = token
         self.value = token.value
+
 
 class Parser(object):
     def __init__(self, lexer):
@@ -50,6 +52,9 @@ class Parser(object):
         if token.type == INTEGER:
             self.eat(INTEGER)
             return Num(token)
+        elif token.type == FLOAT:
+            self.eat(FLOAT)
+            return Num(token)
         elif token.type == LPAREN:
             self.eat(LPAREN)
             node = self.raf_math()
@@ -73,7 +78,7 @@ class Parser(object):
                     return BinOp(left=node, op=token, right=node2)
                 elif token.value == 'SIN':
                     self.eat(RPAREN)
-                    return BinOp(left=node,op=token,right=7)
+                    return BinOp(left=node, op=token, right=7)
                 elif token.value == 'COS':
                     self.eat(RPAREN)
                     return BinOp(left=node, op=token, right=7)
@@ -96,10 +101,11 @@ class Parser(object):
                     self.eat(COMMA)
                     node2 = self.raf_math()
                     self.eat(RPAREN)
-                    return BinOp(left=node,op=token,right=node2)
+                    return BinOp(left=node, op=token, right=node2)
             self.readFromFile()
             if token.value in self.variables:
                 return Num(Token(token.value, self.variables.get(token.value)))
+
     def term(self):
         """term : factor ((MUL | DIV) factor)*"""
         node = self.factor()
@@ -133,7 +139,7 @@ class Parser(object):
 
     def raf_math(self):
         node = self.expr()
-        while self.current_token.type in (GT,GTE,LT,LTE):
+        while self.current_token.type in (GT, GTE, LT, LTE):
             token = self.current_token
             if token.type == GT:
                 self.eat(GT)
@@ -143,7 +149,7 @@ class Parser(object):
                 self.eat(LT)
             elif token.type == LTE:
                 self.eat(LTE)
-            node = BinOp(left=node,op = token, right=self.expr())
+            node = BinOp(left=node, op=token, right=self.expr())
         return node
 
     def parse(self):
@@ -152,7 +158,6 @@ class Parser(object):
             self.error()
         return node
 
-
     def readFromFile(self):
         with open('vars.json', 'r') as f:
             try:
@@ -160,4 +165,3 @@ class Parser(object):
             # if the file is empty the ValueError will be thrown
             except ValueError:
                 self.variables = {}
-

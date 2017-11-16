@@ -2,9 +2,9 @@
 #
 # EOF (end-of-file) token is used to indicate that
 # there is no more input left for lexical analysis
-INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF, SIN, COS, TAN, CTG, SQRT, POW, LOG, LT, GT, LTE, GTE, STRING, COMMA, EQ, LB, LG = (
+INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, EOF, SIN, COS, TAN, CTG, SQRT, POW, LOG, LT, GT, LTE, GTE, STRING, COMMA, EQ, LB, LG, FLOAT = (
     'INTEGER', 'PLUS', 'MINUS', 'MUL', 'DIV', '(', ')', 'EOF', 'SIN', 'COS', 'TAN', 'CTG', 'SQRT', 'POW', 'LOG', 'LT',
-    'GT', 'LTE', 'GTE', 'STRING', 'COMMA', 'EQ','LB','LG'
+    'GT', 'LTE', 'GTE', 'STRING', 'COMMA', 'EQ', 'LB', 'LG', 'FLOAT'
 )
 
 
@@ -56,10 +56,18 @@ class Lexer(object):
     def integer(self):
         """Return a (multidigit) integer consumed from the input."""
         result = ''
-        while self.current_char is not None and self.current_char.isdigit():
+        while self.current_char is not None and (self.current_char.isdigit() or self.current_char == '.'):
             result += self.current_char
             self.advance()
-        return int(result)
+
+        return result
+
+    def double(self):
+        result = ''
+        while self.current_char is not None and (self.current_char.isdigit or self.current_char == '.'):
+            result += self.current_char
+            self.advance()
+        return float(result)
 
     def math_function(self):
         result = ''
@@ -69,7 +77,7 @@ class Lexer(object):
         return str(result)
 
     def isLTE(self):
-        if self.current_char == '<' and self.text[(self.pos+1)]=='=':
+        if self.current_char == '<' and self.text[(self.pos + 1)] == '=':
             return True
         return False
 
@@ -90,7 +98,11 @@ class Lexer(object):
                 continue
 
             if self.current_char.isdigit():
-                return Token(INTEGER, self.integer())
+                result = self.integer()
+                if float(result).is_integer():
+                    return Token(INTEGER, int(result))
+                else:
+                    return Token(FLOAT, float(result))
 
             if self.current_char.isalpha():
                 result = self.math_function()
